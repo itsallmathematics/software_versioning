@@ -19,14 +19,16 @@ typedef struct _version
     unsigned int build;
     unsigned int revision;
 } VERSION;
+
 VERSION *version_new(char *str);
 int version_parse(VERSION *pVer, char *str);
 bool validate_version_string(char *str);
 void version_print(VERSION *pVer);
 void version_compare_print(VERSION *pL, VERSION *pR);
+
 int main() {
-    char ver_string[] = {'5','.','5','.','5','.','0','\0'}; // CANNOT use read-only memory due to strtok
-    char ver_string2[] = {'5','.','5','.','5','.','0','\0'};
+    char ver_string[] = {'5','.','2','5','.','5','.','0','\0'}; // CANNOT use read-only memory due to strtok
+    char ver_string2[] = {'5','.','5','.','5','.','1','\0'};
     VERSION *ver = version_new(ver_string);
     VERSION *ver2 = version_new(ver_string2);
     version_compare_print(ver, ver2);
@@ -34,7 +36,7 @@ int main() {
     free(ver2);
     ver = NULL;
     ver2 = NULL;
-    return 0;
+    return EXIT_SUCCESS;
 }
 
 VERSION *version_new(char *str)
@@ -58,7 +60,7 @@ int version_parse(VERSION *pVer, char * str)
     assert(pVer && str);
     if(!validate_version_string(str))
     {
-        fprintf(stderr, "Invalid version #. Format xxx.xxx.xxx.xxx");
+        fprintf(stderr, "Invalid version #. Format xxx.xxx.xxx.xxx\n");
         return -1;
     }
     char *token;
@@ -84,6 +86,7 @@ bool validate_version_string(char *str)
     {
         tmp = *copy;
         if(tmp == '.') ++count;
+        if((tmp > '9' || tmp < '0') && tmp != '.') return false;
     }
     if(count == 3) return true;
     return false;
